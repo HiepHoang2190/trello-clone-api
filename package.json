@@ -1,4 +1,5 @@
 {
+  
   "name": "trello-clone-api",
   "version": "1.0.0",
   "description": "",
@@ -27,6 +28,7 @@
     "@babel/runtime": "^7.18.9",
     "dotenv": "^16.0.1",
     "express": "^4.18.1",
+    "joi": "^17.6.0",
     "mongodb": "^4.8.0"
   },
   "devDependencies": {
