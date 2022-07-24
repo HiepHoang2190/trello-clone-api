@@ -5,7 +5,7 @@ import { getDB } from '~/config/mongodb'
 
 const columnColllectionName = 'columns'
 const columnCollectionSchema = Joi.object({
-  boardId: Joi.string().required(),
+  boardId: Joi.string().required(), // also ObjectId when create new
   title: Joi.string().required().min(3).max(20).trim(),
   cardOrder: Joi.array().items(Joi.string()).default([]),
   createdAt: Joi.date().timestamp().default(Date.now()),
@@ -20,21 +20,50 @@ const validateSchema = async (data) => {
 
 const createNew = async (data) => {
   try {
-    const value = await validateSchema(data)
-    const result = await getDB().collection(columnColllectionName).insertOne(value)
+    const validatedValue = await validateSchema(data)
+    const insertValue = {
+      ...validatedValue,
+      boardId: ObjectId(validatedValue.boardId)
+    }
+    const result = await getDB().collection(columnColllectionName).insertOne(insertValue)
+
+    const result_total = await {
+      ...result,
+      boardId: insertValue.boardId
+    }
+
+    return result_total
+  } catch (error) {
+    throw new Error(error)
+  }
+}
+
+/**
+ * 
+ * @param {string} boardId 
+ * @param {string} columnId 
+ */
+const pushCardOrder = async (columnId, cardId) => {
+  try {
+    const result = await getDB().collection(columnColllectionName).findOneAndUpdate(
+      { _id: ObjectId(columnId) },
+      { $push: { cardOrder: cardId } },
+      { returnOriginal: false }
+    )
+
     return result
   } catch (error) {
     throw new Error(error)
   }
 }
 
-const update = async (id,data) => {
+const update = async (id, data) => {
   try {
     const result = await getDB().collection(columnColllectionName).findOneAndUpdate(
       { _id: ObjectId(id) },
       { $set: data },
       // {  returnNewDocument:true  }
-      { upsert: true, returnOriginal: false}
+      { upsert: true, returnOriginal: false }
     )
     console.log(result)
     return result.value
@@ -43,4 +72,4 @@ const update = async (id,data) => {
   }
 }
 
-export const ColumnModel = { createNew, update }
+export const ColumnModel = {columnColllectionName, createNew, update, pushCardOrder }
