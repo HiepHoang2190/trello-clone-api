@@ -1,14 +1,15 @@
-import { ColumnModel } from '~/models/column.model'
+import { ColumnModel,findOneById } from '~/models/column.model'
 import { BoardModel} from '~/models/board.model'
 const createNew = async (data) => {
   try {
     // transaction mongodb
-    const newColumn = await ColumnModel.createNew(data)
+    const createdColumn = await ColumnModel.createNew(data)
+    const getNewColumn = await ColumnModel.findOneById(createdColumn.insertedId.toString())
     // update columnOrder Array in board collection
-    const updateBoard = await BoardModel.pushColumnOrder(newColumn.boardId.toString(), newColumn.insertedId.toString())
+    const updateBoard = await BoardModel.pushColumnOrder(getNewColumn.boardId.toString(), getNewColumn._id.toString())
     console.log(updateBoard)
     
-    return newColumn
+    return getNewColumn
   } catch (error) {
     throw new Error(error)
   }
