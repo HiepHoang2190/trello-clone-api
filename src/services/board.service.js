@@ -15,8 +15,11 @@ const createNew = async (data) => {
 
 const getFullBoard = async (boardId) => {
   try {
+    console.log(boardId)
     const board = await BoardModel.getFullBoard(boardId)
-
+    if(!board || !board.columns) {
+      throw new Error('Board not found!')
+    }
     // Add card to each column
     board.columns.forEach(column => {
       column.cards = board.cards.filter(c => c.columnId.toString() === column._id.toString())
@@ -27,6 +30,7 @@ const getFullBoard = async (boardId) => {
     // console.log(board)
     return board
   } catch (error) {
+    // console.log(error.message)
     throw new Error(error)
   }
 }
