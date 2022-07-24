@@ -1,4 +1,6 @@
 import express from 'express'
+import cors from 'cors'
+import {corsOptions} from '~/config/cors'
 import { connectDB, getDB } from '~/config/mongodb'
 import { env } from '~/config/environtment.js'
 import { apiV1 } from '~/routes/v1'
@@ -13,13 +15,16 @@ connectDB()
 const bootServer = () => {
   const app = express()
 
+
+  
+  app.use(cors(corsOptions))
   // Enable req.body data
   app.use(express.json())
-  
+
   //  Use APIs v1
-  app.use('/v1',apiV1)
+  app.use('/v1', apiV1)
   // app.get('/test', async (req, res) => {
-  
+
   //   res.end('<h1>Hello world!</h1><hr/>')
   // })
 
