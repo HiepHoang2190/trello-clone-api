@@ -8,4 +8,4 @@ const createNew = async (data) => {
     throw new Error(error)
   }
 }
-export const BoardSerive = {createNew}
+export const BoardService = {createNew}
