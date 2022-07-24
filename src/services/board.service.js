@@ -1,12 +1,13 @@
-import { BoardModel } from '~/models/board.model'
+import { BoardModel,findOneById } from '~/models/board.model'
 
 const createNew = async (data) => {
   try {
-    const result = await BoardModel.createNew(data)
+    const createdBoard = await BoardModel.createNew(data)
+    const getNewBoard = await BoardModel.findOneById(createdBoard.insertedId.toString())
     // push notification
     // do something...
     // transfomr data
-    return result
+    return getNewBoard
   } catch (error) {
     throw new Error(error)
   }
