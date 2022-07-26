@@ -50,7 +50,7 @@ const pushColumnOrder = async (boardId, columnId) => {
     const result = await getDB().collection(boardColllectionName).findOneAndUpdate(
       { _id: ObjectId(boardId) },
       { $push: { columnOrder: columnId } },
-      { returnDocument:'after' }
+      { returnDocument: 'after' }
     )
 
     return result
@@ -64,7 +64,8 @@ const getFullBoard = async (boardId) => {
     const result = await getDB().collection(boardColllectionName).aggregate([
       {
         $match: {
-          _id: ObjectId(boardId)
+          _id: ObjectId(boardId),
+          _destroy: false
         }
       },
       // add fields để chuyển ObjectId thành string xong truy vấn nếu lúc tạo column và card chưa chuyển
@@ -100,4 +101,4 @@ const getFullBoard = async (boardId) => {
   }
 }
 
-export const BoardModel = { createNew, getFullBoard, pushColumnOrder,findOneById }
+export const BoardModel = { createNew, getFullBoard, pushColumnOrder, findOneById }

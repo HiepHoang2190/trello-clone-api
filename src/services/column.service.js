@@ -1,5 +1,6 @@
 import { ColumnModel, findOneById } from '~/models/column.model'
 import { BoardModel } from '~/models/board.model'
+import { CardModel } from '~/models/card.model'
 const createNew = async (data) => {
   try {
     // transaction mongodb
@@ -25,9 +26,15 @@ const update = async (id, data) => {
       updatedAt: Date.now()
     }
     if(updateData._id) delete updateData._id
+    // if(updateData.cards) delete updateData.cards
   
-    const result = await ColumnModel.update(id, updateData)
-    return result
+    const updatedColumn = await ColumnModel.update(id, updateData)
+    
+    if(updatedColumn._destroy) {
+      // delete many cards in this column
+      CardModel.deleteMany(updatedColumn.cardOrder)
+    }
+    return updatedColumn
   } catch (error) {
     console.log(error)
     throw new Error(error)
