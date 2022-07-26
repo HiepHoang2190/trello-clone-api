@@ -1,4 +1,4 @@
-import Joi from 'joi';
+import Joi, { object } from 'joi';
 import { ObjectId } from 'mongodb'
 import { getDB } from '~/config/mongodb'
 // Define Column collection
@@ -65,9 +65,13 @@ const pushCardOrder = async (columnId, cardId) => {
 
 const update = async (id, data) => {
   try {
+    const updateData = {
+      ...data,
+      boardId:ObjectId(data.boardId)
+    }
     const result = await getDB().collection(columnColllectionName).findOneAndUpdate(
       { _id: ObjectId(id) },
-      { $set: data },
+      { $set: updateData },
       {returnDocument:'after' }
     )
     console.log(result)
