@@ -22,7 +22,7 @@ const getFullBoard = async (boardId) => {
     }
     const transformBoard = cloneDeep(board)
     // Filter deteled columns
-    transformBoard.columns =  transformBoard.columns.filter(column => !column._destroy)
+    transformBoard.columns = transformBoard.columns.filter(column => !column._destroy)
 
     // Add card to each column
     transformBoard.columns.forEach(column => {
@@ -39,4 +39,22 @@ const getFullBoard = async (boardId) => {
   }
 }
 
-export const BoardService = { createNew, getFullBoard }
+const update = async (id, data) => {
+  try {
+    const updateData = {
+      ...data,
+      updatedAt: Date.now()
+    }
+    if (updateData._id) delete updateData._id
+    if (updateData.columns) delete updateData.columns
+
+    const updatedBoard = await BoardModel.update(id, updateData)
+
+    return updatedBoard
+  } catch (error) {
+    console.log(error)
+    throw new Error(error)
+  }
+}
+
+export const BoardService = { createNew, getFullBoard, update }

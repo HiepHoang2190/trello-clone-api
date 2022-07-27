@@ -15,8 +15,8 @@ const createNew = async (req, res) => {
 
 const update = async (req, res) => {
   try {
-    const {id} = req.params
-    const result = await ColumnService.update(id,req.body)
+    const { id } = req.params
+    const result = await ColumnService.update(id, req.body)
     res.status(HttpStatusCode.OK).json(result)
   } catch (error) {
     console.log(error)
