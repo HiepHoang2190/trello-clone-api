@@ -25,12 +25,12 @@ const update = async (id, data) => {
       ...data,
       updatedAt: Date.now()
     }
-    if(updateData._id) delete updateData._id
+    if (updateData._id) delete updateData._id
     // if(updateData.cards) delete updateData.cards
-  
+
     const updatedColumn = await ColumnModel.update(id, updateData)
-    
-    if(updatedColumn._destroy) {
+
+    if (updatedColumn._destroy) {
       // delete many cards in this column
       CardModel.deleteMany(updatedColumn.cardOrder)
     }

@@ -7,7 +7,7 @@ const cardColllectionName = 'cards'
 const cardCollectionSchema = Joi.object({
   boardId: Joi.string().required(),// also ObjectId when create new
   columnId: Joi.string().required(),// also ObjectId when create new
-  title: Joi.string().required().min(3).max(20).trim(),
+  title: Joi.string().required().min(3).max(30).trim(),
   cover: Joi.string().default(null),
   createdAt: Joi.date().timestamp().default(Date.now()),
   updatedAt: Joi.date().timestamp().default(null),
@@ -37,12 +37,34 @@ const createNew = async (data) => {
     const insertValue = {
       ...validatedValue,
       boardId: ObjectId(validatedValue.boardId),
-      columnId: ObjectId(validatedValue.columnId),
+      columnId: ObjectId(validatedValue.columnId)
     }
     const result = await getDB().collection(cardColllectionName).insertOne(insertValue)
 
     return result
 
+  } catch (error) {
+    throw new Error(error)
+  }
+}
+
+const update = async (id, data) => {
+  try {
+    const updateData = { ...data }
+    if (data.boardId) {
+      updateData.boardId = ObjectId(data.boardId)
+    }
+    if (data.columnId) {
+      updateData.columnId = ObjectId(data.columnId)
+    }
+    
+    const result = await getDB().collection(cardColllectionName).findOneAndUpdate(
+      { _id: ObjectId(id) },
+      { $set: updateData },
+      { returnDocument: 'after' }
+    )
+    console.log(result)
+    return result.value
   } catch (error) {
     throw new Error(error)
   }
@@ -57,7 +79,7 @@ const deleteMany = async (ids) => {
     const transformIds = ids.map(i => ObjectId(i))
     const result = await getDB().collection(cardColllectionName).updateMany(
       { _id: { $in: transformIds } },
-      {$set : {_destroy: true}}
+      { $set: { _destroy: true } }
     )
     console.log(result)
     return result
@@ -65,4 +87,4 @@ const deleteMany = async (ids) => {
     throw new Error(error)
   }
 }
-export const CardModel = { cardColllectionName, createNew, findOneById, deleteMany }
+export const CardModel = { cardColllectionName, createNew, findOneById, deleteMany, update }

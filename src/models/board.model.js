@@ -33,8 +33,24 @@ const findOneById = async (id) => {
 const createNew = async (data) => {
   try {
     const value = await validateSchema(data)
+    console.log(value)
     const result = await getDB().collection(boardColllectionName).insertOne(value)
     return result
+  } catch (error) {
+    throw new Error(error)
+  }
+}
+
+const update = async (id, data) => {
+  try {
+    const updateData = { ...data }
+    const result = await getDB().collection(boardColllectionName).findOneAndUpdate(
+      { _id: ObjectId(id) },
+      { $set: updateData },
+      { returnDocument: 'after' }
+    )
+    console.log(result)
+    return result.value
   } catch (error) {
     throw new Error(error)
   }
@@ -101,4 +117,4 @@ const getFullBoard = async (boardId) => {
   }
 }
 
-export const BoardModel = { createNew, getFullBoard, pushColumnOrder, findOneById }
+export const BoardModel = { createNew, getFullBoard, pushColumnOrder, findOneById, update }
